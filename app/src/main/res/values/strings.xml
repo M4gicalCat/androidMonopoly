@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Monopoly</string>
+    <string name="monopoly">Monopoly</string>
+    <string name="code_de_partie">Code de la partie</string>
+    <string name="rejoindre_une_partie">Rejoindre une partie</string>
+    <string name="creer_une_partie">Créer une partie</string>
+    <string name="pseudo">Pseudo</string>
+    <string name="lancer_le_de">Lancer le dé</string>
+    <string name="lancer_la_partie">Lancer la partie</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
