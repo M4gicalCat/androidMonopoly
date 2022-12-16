@@ -49,29 +49,29 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/dices"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layoutDirection="ltr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/black"
+        android:padding="3dp"
+        android:visibility="invisible"
         app:layout_constraintTop_toBottomOf="@+id/affichage_joueurs">
 
         <ImageView
             android:id="@+id/d1"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:background="#000000"
             android:padding="1dp"
-            android:visibility="invisible"
             android:contentDescription="@string/first_dice" />
 
         <ImageView
             android:id="@+id/d2"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:background="#000000"
             android:padding="1dp"
-            android:visibility="invisible"
             android:contentDescription="@string/second_dice" />
 
     </LinearLayout>

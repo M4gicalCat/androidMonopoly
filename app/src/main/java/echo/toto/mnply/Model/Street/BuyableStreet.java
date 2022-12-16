@@ -1,6 +1,7 @@
 package echo.toto.mnply.Model.Street;
 
 
+import echo.toto.mnply.Game.Game;
 import echo.toto.mnply.Game.Player;
 import echo.toto.mnply.UI.Popup;
 
@@ -41,6 +42,7 @@ public class BuyableStreet extends Street {
         }
 
         // propose d'acheter
+        if (player.getGame() == null) player.setGame(Game.game);
         player.getGame().getActivity().runOnUiThread(() -> player.getGame().getActivity().affichePopup(new Popup(
                 "Voulez vous acheter " + name + " pour " + price + " € ?",
                 "Acheter",

@@ -11,6 +11,7 @@ import java.util.Map;
 
 import echo.toto.mnply.Events.Callback;
 import echo.toto.mnply.Events.Data;
+import echo.toto.mnply.Game.Game;
 import echo.toto.mnply.Game.Player;
 import echo.toto.mnply.UI.Popup;
 
@@ -91,6 +92,7 @@ public class Socket {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+            if (getPlayer().getGame() == null) getPlayer().setGame(Game.game);
             getPlayer().getGame().getActivity().runOnUiThread(() -> getPlayer().getGame().getActivity().affichePopup(new Popup("Connection lost", "Exit", "", () -> getPlayer().getGame().getActivity().finish(), () -> {})));
         }
         return null;

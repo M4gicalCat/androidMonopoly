@@ -72,4 +72,9 @@ public class ServerSocket {
         }
         return publicClients;
     }
+
+    public void removeClient(ClientSocket client) {
+        clients.remove(client);
+        client.close();
+    }
 }

@@ -17,6 +17,8 @@ import echo.toto.mnply.Events.Data;
 import echo.toto.mnply.Game.Player;
 import echo.toto.mnply.Game.Server.ServerGame;
 import echo.toto.mnply.Model.GameState;
+import echo.toto.mnply.Model.Model;
+import echo.toto.mnply.Model.Street.BuyableStreet;
 
 public class Server {
     private static Server server = null;
@@ -59,6 +61,35 @@ public class Server {
             if (!game.checkTurn(client.getPlayer())) return;
             game.nextPlayer();
         }));
+
+        socket.on("move", (client, data) -> {
+            if (!game.checkTurn(client.getPlayer())) return;
+            socket.emit(new Data("move", data.getArgs()[0], data.getArgs()[1]), socket.getClients());
+        });
+
+        socket.on("paye", (client, data) -> {
+            int argent = (int) data.getArgs()[2];
+            client.getPlayer().updateMoney(-argent);
+            socket.emit(new Data("paye", data.getArgs()[0], data.getArgs()[1], data.getArgs()[2]), socket.getClients());
+            if (client.getPlayer().getArgent() <= 0) {
+                socket.emit(new Data("mort", client.getPlayer().getId()), socket.getClients());
+                socket.removeClient(client);
+                if (game.getPlayers().size() <= 1) {
+                    socket.emit(new Data("endGame", game.getPlayers().get(0).getId()), socket.getClients());
+                }
+            }
+        });
+
+        socket.on("buyStreet", (client, data) -> {
+            if (!game.checkTurn(client.getPlayer())) return;
+            int position = (int) data.getArgs()[0];
+            client.getPlayer().updateMoney(-((BuyableStreet) Model.getStreet(position)).getPrice());
+            if (client.getPlayer().getArgent() <= 0) {
+                socket.emit(new Data("mort", client.getPlayer().getId()), socket.getClients());
+                socket.removeClient(client);
+            }
+            socket.emit(new Data("buyStreet", client.getPlayer().getId(), position), socket.getClients());
+        });
     }
 
     public void emit(Data data, List<Player> players) {

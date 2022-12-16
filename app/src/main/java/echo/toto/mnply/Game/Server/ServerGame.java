@@ -48,6 +48,11 @@ public class ServerGame {
     }
 
     public boolean checkTurn(Player player) {
+        if (state != GameState.STARTED) return false;
         return player.getId().equals(players.get(whoseTurn).getId());
+    }
+
+    public List<Player> getPlayers() {
+        return players;
     }
 }

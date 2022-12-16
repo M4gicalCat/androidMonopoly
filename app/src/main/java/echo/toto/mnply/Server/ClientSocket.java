@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Objects;
 
 import echo.toto.mnply.Events.Data;
 import echo.toto.mnply.Game.Player;
@@ -13,7 +14,7 @@ import echo.toto.mnply.Game.PublicPlayer;
 
 public class ClientSocket {
     private final Socket socket;
-    private ObjectInputStream inputStream;
+    private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
     private final ServerSocket serverSocket;
     private final Player player;
@@ -41,12 +42,13 @@ public class ClientSocket {
             return (Data) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            serverSocket.removeClient(this);
             try {
-                inputStream.close();
-                inputStream = new ObjectInputStream(socket.getInputStream());
+                socket.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+            Log.e("Server", "Client disconnected");
         }
         return null;
     }

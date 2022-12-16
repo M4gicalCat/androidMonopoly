@@ -1,6 +1,9 @@
 package echo.toto.mnply.Model.Street;
 
+import android.util.Log;
+
 import echo.toto.mnply.Game.Player;
+import echo.toto.mnply.Model.Card;
 import echo.toto.mnply.Model.Model;
 
 public class ChanceStreet extends Street {
@@ -10,6 +13,8 @@ public class ChanceStreet extends Street {
 
     @Override
     public void action(Player player, int[] dices) {
-        Model.tireCarteChance().action(player);
+        Card card = Model.tireCarteChance();
+        Log.i("Carte", card.getTexte());
+        card.action(player);
     }
 }

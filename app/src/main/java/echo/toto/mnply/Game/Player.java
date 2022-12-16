@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import echo.toto.mnply.Events.Data;
+import echo.toto.mnply.Model.GameState;
 import echo.toto.mnply.Model.Model;
 import echo.toto.mnply.Model.Street.BuyableStreet;
 import echo.toto.mnply.Model.Street.PrisonStreet;
@@ -50,6 +51,7 @@ public class Player {
     public void updateMoney(int montant) {
         argent += montant;
         String dollars = argent + "$";
+        if (game == null) setGame(Game.game);
         game.getActivity().runOnUiThread(() -> ((TextView) game.getActivity().findViewById(R.id.affiche_argent)).setText(dollars));
     }
 
@@ -79,7 +81,16 @@ public class Player {
     }
 
     public void setPosition(int position) {
+        setPosition(position, true);
+    }
+
+    public void setPosition(int position, boolean withAction) {
         this.position = position;
+        Game.game.getActivity().runOnUiThread(() -> {
+            ((TextView) Game.game.getActivity().findViewById(R.id.affichage_position)).setText(Model.getStreet(position).getName());
+        });
+        if (Game.game.getState() != GameState.STARTED || !withAction) return;
+        Model.getStreet(position).action(this, new int[]{0, 1});
     }
 
     public int getJetonsSortiePrisons() {
@@ -113,14 +124,17 @@ public class Player {
 
     public void buyStreet(BuyableStreet buyableStreet) {
         if (argent < buyableStreet.getPrice()) return;
-        argent -= buyableStreet.getPrice();
+        updateMoney(-buyableStreet.getPrice());
         streets.add(buyableStreet);
         buyableStreet.setOwner(this);
+        if (game == null) setGame(Game.game);
+        game.emit(new Data("buyStreet", Model.getPosition(buyableStreet)));
     }
 
     public void paye(Player owner, int loyerAPayer) {
         owner.updateMoney(loyerAPayer);
         updateMoney(-loyerAPayer);
+        if (game == null) setGame(Game.game);
         game.emit(new Data("paye", id, owner.getId(), loyerAPayer));
     }
 
@@ -163,6 +177,7 @@ public class Player {
 
     public void addStreet(Street street) {
         streets.add((BuyableStreet) street);
+        ((BuyableStreet) street).setOwner(this);
     }
 
     public void move(int[] dices) {
@@ -171,10 +186,8 @@ public class Player {
             newPosition -= Model.getNbStreets();
             updateMoney(200);
         }
-        if (game == null) {
-            Log.i("Player", "move: game is null | " + name);
-        }
         setPosition(newPosition);
+        if (game == null) setGame(Game.game);
         game.emit(new Data("move", id, newPosition));
         Model.getStreet(newPosition).action(this, dices);
     }
