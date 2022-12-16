@@ -12,14 +12,16 @@ public class PrisonStreet extends Street {
     }
 
     @Override
-    public void action(Player player) {
+    public void action(Player player, int[] dices) {
+        if (dices[0] == dices[1]) {
+            player.setPrison(0);
+        }
         if (player.getPrison() == 0) {
             player.endTurn();
             return;
         }
 
         player.reducePrison();
-        //todo check for dice double to go out of jail
         player.endTurn();
     }
 }

@@ -9,4 +9,6 @@
     <string name="lancer_la_partie">Lancer la partie</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="first_dice">first dice</string>
+    <string name="second_dice">second dice</string>
 </resources>

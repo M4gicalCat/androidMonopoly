@@ -20,6 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:text=""
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/affiche_argent" />
 
@@ -33,6 +34,34 @@
         android:text=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layoutDirection="ltr"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/affichage_joueurs">
+
+        <ImageView
+            android:id="@+id/d1"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="#000000"
+            android:padding="1dp"
+            android:visibility="invisible"
+            android:contentDescription="@string/first_dice" />
+
+        <ImageView
+            android:id="@+id/d2"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="#000000"
+            android:padding="1dp"
+            android:visibility="invisible"
+            android:contentDescription="@string/second_dice" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/affichage_code"
@@ -93,7 +122,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/fragment_popup" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -181,10 +181,7 @@ public class Model {
 
         piocheCartesDeCommunaute.add(new Card("C'est votre anniversaire : chaque joueur doit vous donner € 10", p -> {
             ArrayList<Player> players = p.getGame().getPlayers();
-            int total = 10 * (players.size() + 1);
-            for (Player player : players) player.updateMoney(-10);
-            p.updateMoney(total);
-            //todo faire perdre de l'argent aux autres aussi chez eux
+            for (Player player : players) player.paye(p, 10);
             p.endTurn();
         }));
 

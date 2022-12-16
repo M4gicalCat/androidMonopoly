@@ -9,11 +9,11 @@ public class GareBuyableStreet extends BuyableStreet {
     }
 
     @Override
-    public void action(Player player) {
+    public void action(Player player, int[] dices) {
         if (owner == null || player.getId().compareTo(owner.getId()) == 0) {
-            super.action(player);
+            super.action(player, dices);
             return;
-        };
+        }
         int aPayer = 0;
         /* 25 50 100 200 */
 

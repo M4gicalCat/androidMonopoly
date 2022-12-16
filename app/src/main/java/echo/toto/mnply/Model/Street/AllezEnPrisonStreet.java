@@ -8,7 +8,7 @@ public class AllezEnPrisonStreet extends Street {
     }
 
     @Override
-    public void action(Player player) {
+    public void action(Player player, int[] dices) {
         player.vaEnPrison();
     }
 }

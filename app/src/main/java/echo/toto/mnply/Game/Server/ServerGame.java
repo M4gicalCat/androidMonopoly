@@ -4,16 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import echo.toto.mnply.Events.Data;
 import echo.toto.mnply.Game.Player;
 import echo.toto.mnply.Model.GameState;
+import echo.toto.mnply.Server.Server;
 
 public class ServerGame {
     private final List<Player> players;
     private GameState state;
+    private int whoseTurn;
+    private final Server server;
 
-    public ServerGame() {
+    public ServerGame(Server server) {
         this.players = new ArrayList<>();
         state = GameState.WAITING;
+        whoseTurn = -1;
+        this.server = server;
     }
 
     public void addPlayer(Player player) {
@@ -28,6 +34,20 @@ public class ServerGame {
     }
 
     public void setState(GameState state) {
+        if (state == this.state) return;
         this.state = state;
+        if (state == GameState.STARTED) {
+            nextPlayer();
+        }
+    }
+
+    public void nextPlayer() {
+        whoseTurn = whoseTurn == -1 ? 1 : (whoseTurn + 1) % players.size();
+        ArrayList<Player> list = new ArrayList<Player>() {{add(players.get(whoseTurn));}};
+        server.emit(new Data("yourTurn", players.get(whoseTurn).getId()), list);
+    }
+
+    public boolean checkTurn(Player player) {
+        return player.getId().equals(players.get(whoseTurn).getId());
     }
 }

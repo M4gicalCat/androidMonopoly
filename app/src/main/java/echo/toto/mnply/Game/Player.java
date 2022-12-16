@@ -1,12 +1,18 @@
 package echo.toto.mnply.Game;
 
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.UUID;
 
-import echo.toto.mnply.Client.Socket;
+import echo.toto.mnply.Events.Data;
 import echo.toto.mnply.Model.Model;
 import echo.toto.mnply.Model.Street.BuyableStreet;
 import echo.toto.mnply.Model.Street.PrisonStreet;
+import echo.toto.mnply.Model.Street.Street;
+import echo.toto.mnply.R;
 
 public class Player {
     private String name;
@@ -42,10 +48,12 @@ public class Player {
 
     public void updateMoney(int montant) {
         argent += montant;
+        String dollars = argent + "$";
+        game.getActivity().runOnUiThread(() -> ((TextView) game.getActivity().findViewById(R.id.affiche_argent)).setText(dollars));
     }
 
     public void endTurn() {
-        // todo
+        game.emit(new Data("endTurn", name));
     }
 
     public UUID getId() {
@@ -109,7 +117,9 @@ public class Player {
     }
 
     public void paye(Player owner, int loyerAPayer) {
-        // todo
+        owner.updateMoney(loyerAPayer);
+        updateMoney(-loyerAPayer);
+        game.emit(new Data("paye", id, owner.getId(), loyerAPayer));
     }
 
     public void setId(UUID id) {
@@ -130,5 +140,36 @@ public class Player {
 
     public void setArgent(int argent) {
         this.argent = argent;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Player{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                ", game=" + game +
+                ", streets=" + streets +
+                ", argent=" + argent +
+                ", position=" + position +
+                ", jetonsSortiePrisons=" + jetonsSortiePrisons +
+                ", prison=" + prison +
+                ", isLocal=" + isLocal +
+                '}';
+    }
+
+    public void addStreet(Street street) {
+        streets.add((BuyableStreet) street);
+    }
+
+    public void move(int[] dices) {
+        int newPosition = (position + dices[0] + dices[1]);
+        while (newPosition > Model.getNbStreets()) {
+            newPosition -= Model.getNbStreets();
+            updateMoney(200);
+        }
+        setPosition(newPosition);
+        Model.getStreet(newPosition).action(this, dices);
+        game.emit(new Data("move", name, newPosition)); // todo à voir
     }
 }

@@ -1,5 +1,7 @@
 package echo.toto.mnply.Client;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -43,9 +45,11 @@ public class Socket {
     }
 
     public void emit(Data message) {
+        Log.i("Client", "Emitting (" + message + ")");
         new Thread(() -> {
             try {
                 outputStream.writeObject(message);
+                outputStream.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -72,6 +76,12 @@ public class Socket {
             return (Data) inputStream.readObject();
         } catch (java.io.IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            try {
+                inputStream.skip(inputStream.available());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                System.exit(1);
+            }
             return null;
         }
     }
@@ -90,5 +100,9 @@ public class Socket {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

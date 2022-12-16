@@ -9,7 +9,7 @@ public class ChanceStreet extends Street {
     }
 
     @Override
-    public void action(Player player) {
+    public void action(Player player, int[] dices) {
         Model.tireCarteChance().action(player);
     }
 }

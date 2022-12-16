@@ -1,5 +1,7 @@
 package echo.toto.mnply.Server;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +36,7 @@ public class ServerSocket {
     }
 
     public void emit(Data data, List<ClientSocket> clients) {
+        Log.i("ServerSocket", "Emitting (" + data + ") to " + clients.size() + " clients");
         for (ClientSocket client : clients) {
             client.emit(data);
         }

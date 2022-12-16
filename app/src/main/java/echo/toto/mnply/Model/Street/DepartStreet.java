@@ -8,7 +8,7 @@ public class DepartStreet extends Street {
     }
 
     @Override
-    public void action(Player player) {
+    public void action(Player player, int[] dices) {
         player.updateMoney(200);
         player.endTurn();
     }

@@ -9,7 +9,7 @@ public  abstract class Street {
         this.name = name;
     }
 
-    public abstract void action(Player player);
+    public abstract void action(Player player, int[] dices);
 
     public int getNbHotel() {return 0;}
 

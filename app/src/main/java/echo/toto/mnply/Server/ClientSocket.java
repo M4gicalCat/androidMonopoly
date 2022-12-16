@@ -1,5 +1,6 @@
 package echo.toto.mnply.Server;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -27,6 +28,7 @@ public class ClientSocket {
     public void emit(Data data) {
         try {
             outputStream.writeObject(data);
+            outputStream.flush();
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
@@ -35,8 +37,13 @@ public class ClientSocket {
     public Data receive() {
         try {
             return (Data) inputStream.readObject();
-        } catch (java.io.IOException | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            try {
+                socket.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
         return null;
     }
@@ -48,6 +55,7 @@ public class ClientSocket {
                 if (data == null) continue;
                 serverSocket.receive(data, this);
             }
+            player.getGame().getActivity().close("Une erreur est survenue");
         })).start();
     }
 

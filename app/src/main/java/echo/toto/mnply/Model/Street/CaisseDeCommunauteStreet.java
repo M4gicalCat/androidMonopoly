@@ -10,7 +10,7 @@ public class CaisseDeCommunauteStreet extends Street {
     }
 
     @Override
-    public void action(Player player) {
+    public void action(Player player, int[] dices) {
         Card card = Model.tireCarteCaisseDeCommunaute();
         card.action(player);
     }

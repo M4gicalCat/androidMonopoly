@@ -2,15 +2,22 @@ package echo.toto.mnply.UI;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 
@@ -29,6 +36,10 @@ public class MonopolyActivity extends AppCompatActivity {
 
     private Game game;
     private Socket socket;
+
+    private float mAccel;
+    private float mAccelCurrent;
+    private float mAccelLast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +69,9 @@ public class MonopolyActivity extends AppCompatActivity {
         TextView pseudoView = findViewById(R.id.affiche_pseudo);
         pseudoView.setText(pseudo);
 
+        Button lancerLeDe = findViewById(R.id.lance_le_de);
+        lancerLeDe.setOnClickListener((view) -> game.jouer());
+
         if (isHost) {
             buttonStartGame.setVisibility(View.VISIBLE);
             Socket finalSocket = socket;
@@ -66,15 +80,24 @@ public class MonopolyActivity extends AppCompatActivity {
         affichageCode.setText(AdresseIpEtPort.translateToCode(ip, port));
         game = new Game(this, socket);
         Player player = new Player(UUID.randomUUID(), pseudo);
+        game.setLocalPlayer(player);
+        Log.i("Player", player.toString());
         socket.setPlayer(player);
         socket.emit(new Data("pseudo", pseudo, player.getId()));
-        socket.on("logger", (__, data) -> Log.i("Client", Arrays.toString(data.getArgs())));
+        socket.on("logger", (__, data) -> Log.i("Client", "(" + data.getEvent() + ") | " + Arrays.toString(data.getArgs())));
         socket.on("message", (client, args) -> System.out.println(Arrays.toString(args.getArgs())));
         socket.on("startGame", (client, args) -> {
             game.setState(GameState.STARTED);
             affichePopup(new Popup("Le jeu commence !", "C'est parti !", "", () -> {}, () -> {}));
             runOnUiThread(() -> buttonStartGame.setVisibility(View.INVISIBLE));
         });
+
+        SensorManager shakeDetector = (SensorManager) game.getActivity().getSystemService(Context.SENSOR_SERVICE);
+        Objects.requireNonNull(shakeDetector).registerListener(shakeCallback, shakeDetector.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
+        mAccel = 10f;
+        mAccelCurrent = SensorManager.GRAVITY_EARTH;
+        mAccelLast = SensorManager.GRAVITY_EARTH;
     }
 
     public void affichePopup(Popup options) {
@@ -100,5 +123,29 @@ public class MonopolyActivity extends AppCompatActivity {
             text.append(players.get(players.size() - 1).getName()).append(".");
             affichageJoueurs.setText(text.toString());
         });
+    }
+
+    private final SensorEventListener shakeCallback = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            if (findViewById(R.id.lance_le_de).getVisibility() != View.VISIBLE) return;
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = (float) Math.sqrt((double) (x * x + y * y + z * z));
+            float delta = mAccelCurrent - mAccelLast;
+            mAccel = mAccel * 0.9f + delta;
+            if (mAccel > 10) {
+                game.jouer();
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int i) {}
+    };
+
+    public void close(String erreur) {
+        runOnUiThread(() -> affichePopup(new Popup("Erreur : " + erreur, "Quitter", "", this::finish, () -> {})));
     }
 }
