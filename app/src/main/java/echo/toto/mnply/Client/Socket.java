@@ -2,6 +2,7 @@ package echo.toto.mnply.Client;
 
 import android.util.Log;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -11,6 +12,7 @@ import java.util.Map;
 import echo.toto.mnply.Events.Callback;
 import echo.toto.mnply.Events.Data;
 import echo.toto.mnply.Game.Player;
+import echo.toto.mnply.UI.Popup;
 
 public class Socket {
     private java.net.Socket socket;
@@ -58,7 +60,7 @@ public class Socket {
 
     private void acceptMessages() {
         (new Thread(() -> {
-            while (true) {
+            while (!socket.isClosed()) {
                 Data message = receive();
                 if (message == null) {
                     continue;
@@ -68,22 +70,30 @@ public class Socket {
                 Callback callback = callbacks.get(message.getEvent());
                 if (callback != null) callback.call(null, message);
             }
+            getPlayer().getGame().getActivity().runOnUiThread(() -> getPlayer().getGame().getActivity().affichePopup(new Popup("Connection lost", "Exit", "", () -> getPlayer().getGame().getActivity().finish(), () -> {})));
         })).start();
     }
 
     public Data receive() {
         try {
             return (Data) inputStream.readObject();
-        } catch (java.io.IOException | ClassNotFoundException e) {
+        } catch (EOFException exception) {
+            try {
+                inputStream.close();
+                inputStream = new ObjectInputStream(socket.getInputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             try {
-                inputStream.skip(inputStream.available());
+                socket.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
-                System.exit(1);
             }
-            return null;
+            getPlayer().getGame().getActivity().runOnUiThread(() -> getPlayer().getGame().getActivity().affichePopup(new Popup("Connection lost", "Exit", "", () -> getPlayer().getGame().getActivity().finish(), () -> {})));
         }
+        return null;
     }
 
     public void disconnect() throws java.io.IOException {

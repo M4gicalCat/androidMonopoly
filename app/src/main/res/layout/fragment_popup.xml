@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".UI.PopupFragment"
-    android:background="@color/cardview_light_background">
+    android:background="@color/white">
 
     <!-- todo make the title wrap on multiple lines -->
     <TextView
@@ -15,6 +15,8 @@
         app:layout_constraintEnd_toStartOf="@+id/linearLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/black"
+        android:background="@color/white"
         android:layout_weight="1"/>
 
     <LinearLayout
@@ -28,13 +30,17 @@
             android:id="@+id/popup_button_true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"/>
+            android:textColor="@color/black"
+            android:background="@color/white"
+            style="?android:attr/buttonBarButtonStyle" />
 
         <Button
             android:id="@+id/popup_button_false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog" />
+            android:textColor="@color/black"
+            android:background="@color/white"
+            style="?android:attr/buttonBarButtonStyle" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

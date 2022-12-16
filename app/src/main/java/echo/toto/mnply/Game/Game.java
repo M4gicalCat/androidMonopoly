@@ -1,6 +1,5 @@
 package echo.toto.mnply.Game;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 

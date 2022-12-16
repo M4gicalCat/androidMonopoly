@@ -1,5 +1,6 @@
 package echo.toto.mnply.Game;
 
+import android.util.Log;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -53,7 +54,8 @@ public class Player {
     }
 
     public void endTurn() {
-        game.emit(new Data("endTurn", name));
+        Log.i("Player", "end of " + name + "'s turn");
+        game.emit(new Data("endTurn", id));
     }
 
     public UUID getId() {
@@ -128,6 +130,7 @@ public class Player {
 
     public void setGame(Game game) {
         this.game = game;
+        Log.println(Log.WARN, "Player", "setGame: " + game);
     }
 
     public void setPrison(int prison) {
@@ -168,8 +171,11 @@ public class Player {
             newPosition -= Model.getNbStreets();
             updateMoney(200);
         }
+        if (game == null) {
+            Log.i("Player", "move: game is null | " + name);
+        }
         setPosition(newPosition);
+        game.emit(new Data("move", id, newPosition));
         Model.getStreet(newPosition).action(this, dices);
-        game.emit(new Data("move", name, newPosition)); // todo à voir
     }
 }

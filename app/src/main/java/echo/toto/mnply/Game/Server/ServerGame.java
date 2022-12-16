@@ -42,7 +42,7 @@ public class ServerGame {
     }
 
     public void nextPlayer() {
-        whoseTurn = whoseTurn == -1 ? 1 : (whoseTurn + 1) % players.size();
+        whoseTurn = whoseTurn == -1 ? 0 : (whoseTurn + 1) % players.size();
         ArrayList<Player> list = new ArrayList<Player>() {{add(players.get(whoseTurn));}};
         server.emit(new Data("yourTurn", players.get(whoseTurn).getId()), list);
     }

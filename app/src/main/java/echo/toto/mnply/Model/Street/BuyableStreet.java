@@ -23,7 +23,7 @@ public class BuyableStreet extends Street {
 
     @Override
     public void action(Player player, int[] dices) {
-        if (owner != null && player.getId().compareTo(owner.getId()) == 0) {
+        if (owner != null && player.getId().equals(owner.getId())) {
             player.endTurn();
             return;
         }
